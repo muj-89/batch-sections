@@ -113,125 +113,110 @@
     © 2026 – This platform belongs to 𝑀𝓊𝒿
   </footer>
 
-  <!-- Script -->
-  <script>
-    let data = JSON.parse(localStorage.getItem('batchLinks')) || [];
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    deleteDoc,
+    onSnapshot,
+    doc
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    function render() {
-      const q = document.getElementById('search')?.value.toLowerCase() || '';
+  const firebaseConfig = {
+    apiKey: "ضع_API_KEY_من_فايربيس",
+    authDomain: "ضع_authDomain",
+    projectId: "ضع_projectId",
+    storageBucket: "ضع_storageBucket",
+    messagingSenderId: "ضع_messagingSenderId",
+    appId: "ضع_appId"
+  };
 
-      ['male', 'female', 'general'].forEach(cat => {
-        document.getElementById(cat).innerHTML = '';
-      });
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-      data.forEach((item, index) => {
-        if (
-          !item.group.toLowerCase().includes(q) &&
-          !item.section.toLowerCase().includes(q) &&
-          !item.batch.toLowerCase().includes(q)
-        ) return;
+  let data = [];
 
-        document.getElementById(item.category).innerHTML += `
-          <div class="border rounded-xl overflow-hidden dark:border-gray-600">
-            <div class="h-2 ${
-              item.batch === '22' ? 'bg-blue-500' :
-              item.batch === '23' ? 'bg-green-500' :
-              item.batch === '24' ? 'bg-yellow-500' :
-              item.batch === '25' ? 'bg-purple-500' :
-              'bg-gray-400'
-            }"></div>
+  // تحميل البيانات للجميع (Realtime)
+  onSnapshot(collection(db, "groups"), (snapshot) => {
+    data = snapshot.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+    render();
+  });
 
-            <div class="p-4 flex justify-between items-center">
-              <div>
-                <h3 class="font-bold">${item.group}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-300">
-                  Batch: ${item.batch} | Section: ${item.section}
-                </p>
-              </div>
+  function render() {
+    const q = document.getElementById('search')?.value.toLowerCase() || '';
 
-              <div class="flex gap-3 items-center">
-                <a href="${item.link}" target="_blank"
-                   class="text-indigo-700 dark:text-indigo-400 font-semibold">
-                  Open
-                </a>
+    ['male','female','general'].forEach(cat => {
+      document.getElementById(cat).innerHTML = '';
+    });
 
-                <button onclick="deleteLink(${index})"
-                        class="text-red-600 hover:text-red-800 font-semibold">
-                  🗑
-                </button>
-              </div>
+    data.forEach(item => {
+      if (
+        !item.group.toLowerCase().includes(q) &&
+        !item.section.toLowerCase().includes(q) &&
+        !item.batch.toLowerCase().includes(q)
+      ) return;
+
+      document.getElementById(item.category).innerHTML += `
+        <div class="border rounded-xl overflow-hidden dark:border-gray-600">
+          <div class="p-4 flex justify-between items-center">
+            <div>
+              <h3 class="font-bold">${item.group}</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-300">
+                Batch: ${item.batch} | Section: ${item.section}
+              </p>
+            </div>
+            <div class="flex gap-3 items-center">
+              <a href="${item.link}" target="_blank"
+                 class="text-indigo-700 dark:text-indigo-400 font-semibold">
+                Open
+              </a>
+              <button onclick="deleteLink('${item.id}')"
+                      class="text-red-600 font-semibold">
+                🗑
+              </button>
             </div>
           </div>
-        `;
-      });
+        </div>
+      `;
+    });
+  }
 
-      localStorage.setItem('batchLinks', JSON.stringify(data));
+  // إضافة
+  window.addLink = async function () {
+    const group = groupName.value.trim();
+    const section = section.value.trim() || 'All';
+    const batch = batch.value;
+    const category = category.value;
+    const link = link.value.trim();
+
+    if (!group || !batch || !link) {
+      alert('Please fill required fields');
+      return;
     }
 
-    function addLink() {
-      const group = document.getElementById('groupName').value.trim();
-      const section = document.getElementById('section').value.trim() || 'All';
-      const batch = document.getElementById('batch').value;
-      const category = document.getElementById('category').value;
-      const link = document.getElementById('link').value.trim();
+    await addDoc(collection(db, "groups"), {
+      group, section, batch, category, link
+    });
 
-      if (!group || !link || !batch) {
-        alert('Please fill required fields');
-        return;
-      }
+    groupName.value = '';
+    section.value = '';
+    batch.value = '';
+    link.value = '';
+  };
 
-      const exists = data.some(item =>
-        item.group.toLowerCase() === group.toLowerCase() &&
-        item.section.toLowerCase() === section.toLowerCase() &&
-        item.batch === batch &&
-        item.category === category
-      );
+  // حذف
+  window.deleteLink = async function (id) {
+    if (!confirm('Are you sure you want to delete this group?')) return;
+    await deleteDoc(doc(db, "groups", id));
+  };
+</script>
 
-      if (exists) {
-        alert('⚠️ هذه المادة موجودة مسبقًا');
-        return;
-      }
-
-      data.push({ group, section, batch, category, link });
-      render();
-
-      document.getElementById('groupName').value = '';
-      document.getElementById('section').value = '';
-      document.getElementById('batch').value = '';
-      document.getElementById('link').value = '';
-    }
-
-    function deleteLink(index) {
-      if (!confirm('Are you sure you want to delete this group?')) return;
-      data.splice(index, 1);
-      render();
-    }
-
-    function updateThemeButton() {
-      const btn = document.getElementById('themeToggleBtn');
-      const isDark = document.documentElement.classList.contains('dark');
-      btn.innerHTML = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
-    }
-
-    function toggleDarkMode() {
-      const btn = document.getElementById('themeToggleBtn');
-      btn.classList.remove('theme-animate');
-      void btn.offsetWidth;
-      btn.classList.add('theme-animate');
-
-      document.documentElement.classList.toggle('dark');
-      const isDark = document.documentElement.classList.contains('dark');
-      localStorage.setItem('darkMode', isDark);
-      updateThemeButton();
-    }
-
-    if (localStorage.getItem('darkMode') === 'true') {
-      document.documentElement.classList.add('dark');
-    }
-
-    updateThemeButton();
-    render();
-  </script>
 
 </body>
 </html>
+
