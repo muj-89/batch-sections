@@ -87,7 +87,6 @@
   © 2026 – 𝑀𝓊𝒿
 </footer>
 
-<!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import {
@@ -121,14 +120,24 @@
       if (![item.group,item.section,item.batch].some(v => v.toLowerCase().includes(q))) return;
 
       document.getElementById(item.category).innerHTML += `
-        <div class="border p-3 rounded flex justify-between">
-          <div>
-            <b>${item.group}</b>
-            <div class="text-sm">Batch ${item.batch} | ${item.section}</div>
-          </div>
-          <div class="flex gap-3">
-            <a href="${item.link}" target="_blank">Open</a>
-            <button onclick="deleteLink('${item.id}')">🗑</button>
+        <div class="border rounded overflow-hidden">
+          <div class="h-2 ${
+            item.batch === '22' ? 'bg-blue-500' :
+            item.batch === '23' ? 'bg-green-500' :
+            item.batch === '24' ? 'bg-yellow-500' :
+            item.batch === '25' ? 'bg-purple-500' :
+            'bg-gray-400'
+          }"></div>
+
+          <div class="p-3 flex justify-between">
+            <div>
+              <b>${item.group}</b>
+              <div class="text-sm">Batch ${item.batch} | ${item.section}</div>
+            </div>
+            <div class="flex gap-3">
+              <a href="${item.link}" target="_blank">Open</a>
+              <button onclick="deleteLink('${item.id}')">🗑</button>
+            </div>
           </div>
         </div>`;
     });
@@ -150,7 +159,6 @@
     if (confirm("Delete?")) await deleteDoc(doc(db,"groups",id));
   };
 
-  // Dark Mode
   window.toggleDarkMode = function () {
     document.documentElement.classList.toggle("dark");
     localStorage.setItem("darkMode",
