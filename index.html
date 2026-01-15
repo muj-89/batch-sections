@@ -117,15 +117,15 @@
     ["male","female","general"].forEach(c => document.getElementById(c).innerHTML = "");
 
     data.forEach(item => {
-      if (![item.group,item.section,item.batch].some(v => v.toLowerCase().includes(q))) return;
+      if (![item.group,item.section,String(item.batch)].some(v => v.toLowerCase().includes(q))) return;
 
       document.getElementById(item.category).innerHTML += `
         <div class="border rounded overflow-hidden">
           <div class="h-2 ${
-            item.batch === '22' ? 'bg-blue-500' :
-            item.batch === '23' ? 'bg-green-500' :
-            item.batch === '24' ? 'bg-yellow-500' :
-            item.batch === '25' ? 'bg-purple-500' :
+            String(item.batch) === '22' ? 'bg-blue-500' :
+            String(item.batch) === '23' ? 'bg-green-500' :
+            String(item.batch) === '24' ? 'bg-yellow-500' :
+            String(item.batch) === '25' ? 'bg-purple-500' :
             'bg-gray-400'
           }"></div>
 
@@ -148,7 +148,7 @@
     await addDoc(collection(db,"groups"), {
       group: groupName.value,
       section: section.value || "All",
-      batch: batch.value,
+      batch: batch.value,   // يروح Firebase
       category: category.value,
       link: link.value
     });
