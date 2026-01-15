@@ -4,19 +4,16 @@
   <meta charset="UTF-8" />
   <title>Academic Sections Navigator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
 
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      darkMode: 'class'
-    }
+    tailwind.config = { darkMode: 'class' }
   </script>
 
   <style>
     .theme-animate {
       animation: popRotate 0.4s ease;
     }
-
     @keyframes popRotate {
       0% { transform: scale(1) rotate(0deg); }
       50% { transform: scale(1.15) rotate(15deg); }
@@ -27,199 +24,150 @@
 
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
 
-  <!-- Header -->
-  <header class="bg-indigo-700 dark:bg-gray-800 text-white p-4 md:p-6 shadow flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-    <div>
-      <h1 class="text-xl md:text-2xl font-bold">🧭 Academic Sections Navigator</h1>
-      <p class="text-sm opacity-90">Organized & managed by 𝑀𝓊𝒿</p>
-    </div>
+<header class="bg-indigo-700 dark:bg-gray-800 text-white p-4 shadow flex justify-between items-center">
+  <div>
+    <h1 class="text-xl font-bold">🧭 Academic Sections Navigator</h1>
+    <p class="text-sm opacity-80">Organized & managed by 𝑀𝓊𝒿</p>
+  </div>
+  <button id="themeToggleBtn"
+          onclick="toggleDarkMode()"
+          class="bg-white/20 px-4 py-2 rounded text-sm">
+    🌙 Dark Mode
+  </button>
+</header>
 
-    <button id="themeToggleBtn"
-            onclick="toggleDarkMode()"
-            class="bg-white/20 px-4 py-2 rounded hover:bg-white/30 text-sm
-                   transition-all duration-300 active:scale-95">
-      🌙 Dark Mode
-    </button>
-  </header>
+<main class="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6">
 
-  <!-- Main -->
-  <main class="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+<section class="bg-white dark:bg-gray-800 dark:text-white p-6 rounded-xl shadow">
+  <h2 class="font-semibold mb-4">➕ Add Group Link</h2>
 
-    <!-- Add Link Form -->
-    <section class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow p-6 md:col-span-1">
-      <h2 class="text-lg font-semibold mb-4">➕ Add Group Link</h2>
+  <input id="groupName" class="w-full mb-2 p-2 border rounded dark:bg-gray-700" placeholder="Group Name">
+  <input id="section" class="w-full mb-2 p-2 border rounded dark:bg-gray-700" placeholder="Section">
+  <select id="batch" class="w-full mb-2 p-2 border rounded dark:bg-gray-700">
+    <option value="">Select Batch</option>
+    <option value="22">Batch 22</option>
+    <option value="23">Batch 23</option>
+    <option value="24">Batch 24</option>
+    <option value="25">Batch 25</option>
+  </select>
+  <select id="category" class="w-full mb-2 p-2 border rounded dark:bg-gray-700">
+    <option value="male">👨 Male</option>
+    <option value="female">👩 Female</option>
+    <option value="general">🌐 General</option>
+  </select>
+  <input id="link" class="w-full mb-3 p-2 border rounded dark:bg-gray-700" placeholder="Group Link">
 
-      <input id="groupName" type="text" placeholder="Group Name"
-             class="w-full mb-3 p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+  <button onclick="addLink()" class="w-full bg-indigo-700 text-white py-2 rounded">
+    Save
+  </button>
+</section>
 
-      <input id="section" type="text" placeholder="Section Number (e.g. 201)"
-             class="w-full mb-3 p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+<section class="md:col-span-2 space-y-6">
+  <input id="search" oninput="render()" placeholder="🔍 Search..."
+         class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
 
-      <select id="batch"
-              class="w-full mb-3 p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-        <option value="">Select Batch</option>
-        <option value="22">Batch 22</option>
-        <option value="23">Batch 23</option>
-        <option value="24">Batch 24</option>
-        <option value="25">Batch 25</option>
-      </select>
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <h2 class="font-semibold mb-2">👨 Male</h2>
+    <div id="male" class="space-y-3"></div>
+  </div>
 
-      <select id="category"
-              class="w-full mb-3 p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-        <option value="male">👨 Male</option>
-        <option value="female">👩 Female</option>
-        <option value="general">🌐 General</option>
-      </select>
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <h2 class="font-semibold mb-2">👩 Female</h2>
+    <div id="female" class="space-y-3"></div>
+  </div>
 
-      <input id="link" type="url" placeholder="Group Link"
-             class="w-full mb-3 p-2 border rounded dark:bg-gray-700 dark:border-gray-600" />
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <h2 class="font-semibold mb-2">🌐 General</h2>
+    <div id="general" class="space-y-3"></div>
+  </div>
+</section>
+</main>
 
-      <button onclick="addLink()"
-              class="w-full bg-indigo-700 hover:bg-indigo-800 text-white py-2 rounded transition">
-        Save
-      </button>
-    </section>
+<footer class="text-center text-sm text-gray-500 py-4">
+  © 2026 – 𝑀𝓊𝒿
+</footer>
 
-    <!-- Sections -->
-    <section class="md:col-span-2 space-y-6">
-
-      <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-        <input id="search"
-               oninput="render()"
-               type="text"
-               placeholder="🔍 Search by group, section or batch..."
-               class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-      </div>
-
-      <div class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow p-6">
-        <h2 class="text-lg font-semibold mb-4">👨 Male Sections</h2>
-        <div id="male" class="grid gap-4"></div>
-      </div>
-
-      <div class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow p-6">
-        <h2 class="text-lg font-semibold mb-4">👩 Female Sections</h2>
-        <div id="female" class="grid gap-4"></div>
-      </div>
-
-      <div class="bg-white dark:bg-gray-800 dark:text-white rounded-2xl shadow p-6">
-        <h2 class="text-lg font-semibold mb-4">🌐 General Groups</h2>
-        <div id="general" class="grid gap-4"></div>
-      </div>
-
-    </section>
-  </main>
-
-  <footer class="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
-    © 2026 – This platform belongs to 𝑀𝓊𝒿
-  </footer>
-
- <script type="module">
+<!-- Firebase -->
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import {
-    getFirestore,
-    collection,
-    addDoc,
-    deleteDoc,
-    onSnapshot,
-    doc
+    getFirestore, collection, addDoc, deleteDoc, onSnapshot, doc
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
-  apiKey: "AIzaSyC_D4zpRYUQTpnLOx1TnPVsMEcm4hjNt4E",
-  authDomain: "academic-sections-navigator.firebaseapp.com",
-  projectId: "academic-sections-navigator",
-  storageBucket: "academic-sections-navigator.firebasestorage.app",
-  messagingSenderId: "591171749692",
-  appId: "1:591171749692:web:521c6dd2b7f2a5e4234039",
-  measurementId: "G-H427FKXBRB"
-};
-
+    apiKey: "AIzaSyC_D4zpRYUQTpnLOx1TnPVsMEcm4hjNt4E",
+    authDomain: "academic-sections-navigator.firebaseapp.com",
+    projectId: "academic-sections-navigator",
+    storageBucket: "academic-sections-navigator.firebasestorage.app",
+    messagingSenderId: "591171749692",
+    appId: "1:591171749692:web:521c6dd2b7f2a5e4234039"
+  };
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
   let data = [];
 
-  // تحميل البيانات للجميع (Realtime)
-  onSnapshot(collection(db, "groups"), (snapshot) => {
-    data = snapshot.docs.map(d => ({
-      id: d.id,
-      ...d.data()
-    }));
+  onSnapshot(collection(db, "groups"), snap => {
+    data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     render();
   });
 
-  function render() {
-    const q = document.getElementById('search')?.value.toLowerCase() || '';
-
-    ['male','female','general'].forEach(cat => {
-      document.getElementById(cat).innerHTML = '';
-    });
+  window.render = function () {
+    const q = search.value.toLowerCase();
+    ["male","female","general"].forEach(c => document.getElementById(c).innerHTML = "");
 
     data.forEach(item => {
-      if (
-        !item.group.toLowerCase().includes(q) &&
-        !item.section.toLowerCase().includes(q) &&
-        !item.batch.toLowerCase().includes(q)
-      ) return;
+      if (![item.group,item.section,item.batch].some(v => v.toLowerCase().includes(q))) return;
 
       document.getElementById(item.category).innerHTML += `
-        <div class="border rounded-xl overflow-hidden dark:border-gray-600">
-          <div class="p-4 flex justify-between items-center">
-            <div>
-              <h3 class="font-bold">${item.group}</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-300">
-                Batch: ${item.batch} | Section: ${item.section}
-              </p>
-            </div>
-            <div class="flex gap-3 items-center">
-              <a href="${item.link}" target="_blank"
-                 class="text-indigo-700 dark:text-indigo-400 font-semibold">
-                Open
-              </a>
-              <button onclick="deleteLink('${item.id}')"
-                      class="text-red-600 font-semibold">
-                🗑
-              </button>
-            </div>
+        <div class="border p-3 rounded flex justify-between">
+          <div>
+            <b>${item.group}</b>
+            <div class="text-sm">Batch ${item.batch} | ${item.section}</div>
           </div>
-        </div>
-      `;
+          <div class="flex gap-3">
+            <a href="${item.link}" target="_blank">Open</a>
+            <button onclick="deleteLink('${item.id}')">🗑</button>
+          </div>
+        </div>`;
     });
+  };
+
+  window.addLink = async function () {
+    if (!groupName.value || !batch.value || !link.value) return alert("Fill required fields");
+    await addDoc(collection(db,"groups"), {
+      group: groupName.value,
+      section: section.value || "All",
+      batch: batch.value,
+      category: category.value,
+      link: link.value
+    });
+    groupName.value = section.value = batch.value = link.value = "";
+  };
+
+  window.deleteLink = async function (id) {
+    if (confirm("Delete?")) await deleteDoc(doc(db,"groups",id));
+  };
+
+  // Dark Mode
+  window.toggleDarkMode = function () {
+    document.documentElement.classList.toggle("dark");
+    localStorage.setItem("darkMode",
+      document.documentElement.classList.contains("dark"));
+    updateThemeButton();
+  };
+
+  function updateThemeButton() {
+    themeToggleBtn.innerHTML =
+      document.documentElement.classList.contains("dark")
+      ? "☀️ Light Mode" : "🌙 Dark Mode";
   }
 
-  // إضافة
-  window.addLink = async function () {
-    const group = groupName.value.trim();
-    const section = section.value.trim() || 'All';
-    const batch = batch.value;
-    const category = category.value;
-    const link = link.value.trim();
-
-    if (!group || !batch || !link) {
-      alert('Please fill required fields');
-      return;
-    }
-
-    await addDoc(collection(db, "groups"), {
-      group, section, batch, category, link
-    });
-
-    groupName.value = '';
-    section.value = '';
-    batch.value = '';
-    link.value = '';
-  };
-
-  // حذف
-  window.deleteLink = async function (id) {
-    if (!confirm('Are you sure you want to delete this group?')) return;
-    await deleteDoc(doc(db, "groups", id));
-  };
+  if (localStorage.getItem("darkMode")==="true")
+    document.documentElement.classList.add("dark");
+  updateThemeButton();
 </script>
-
 
 </body>
 </html>
-
-
