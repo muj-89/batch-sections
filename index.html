@@ -95,7 +95,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import {
-    getFirestore, collection, addDoc, deleteDoc, onSnapshot, doc
+    getFirestore, collection, addDoc, onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -146,10 +146,6 @@
                  class="text-indigo-700 dark:text-indigo-400 font-semibold">
                 Open
               </a>
-              <button onclick="deleteLink('${item.id}')"
-                      class="text-red-600 dark:text-red-400">
-                🗑
-              </button>
             </div>
           </div>
         </div>`;
@@ -171,21 +167,20 @@
     groupName.value = section.value = batch.value = link.value = "";
   };
 
-  window.deleteLink = async function (id) {
-    if (confirm("Delete?")) await deleteDoc(doc(db,"groups",id));
-  };
-
   window.toggleDarkMode = function () {
     document.documentElement.classList.toggle("dark");
-    localStorage.setItem("darkMode",
-      document.documentElement.classList.contains("dark"));
+    localStorage.setItem(
+      "darkMode",
+      document.documentElement.classList.contains("dark")
+    );
     updateThemeButton();
   };
 
   function updateThemeButton() {
     themeToggleBtn.innerHTML =
       document.documentElement.classList.contains("dark")
-      ? "☀️ Light Mode" : "🌙 Dark Mode";
+      ? "☀️ Light Mode"
+      : "🌙 Dark Mode";
   }
 
   if (localStorage.getItem("darkMode") === "true")
