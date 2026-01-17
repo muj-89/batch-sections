@@ -1,1 +1,200 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <title>Academic Sections Navigator</title> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <script src="https://cdn.tailwindcss.com"></script> <script> tailwind.config = { darkMode: 'class' } </script> <style> .theme-animate { animation: popRotate 0.4s ease; } @keyframes popRotate { 0% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.15) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } } </style> </head> <body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300"> <header class="bg-indigo-700 dark:bg-gray-800 text-white p-4 shadow flex justify-between items-center"> <div> <h1 class="text-xl font-bold">🧭 Academic Sections Navigator</h1> <p class="text-sm opacity-80">Organized & managed by 𝑀𝓊𝒿</p> </div> <button id="themeToggleBtn" onclick="toggleDarkMode()" class="bg-white/20 px-4 py-2 rounded text-sm"> 🌙 Dark Mode </button> </header> <main class="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6"> <!-- Add form --> <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow"> <h2 class="font-semibold mb-4">➕ Add Group Link</h2> <input id="groupName" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Group Name"> <input id="section" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Section (number only)"> <select id="batch" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white"> <option value="">Select Batch</option> <option value="22">Batch 22</option> <option value="23">Batch 23</option> <option value="24">Batch 24</option> <option value="25">Batch 25</option> </select> <select id="category" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white"> <option value="male">👨 Male</option> <option value="female">👩 Female</option> <option value="general">🌐 General</option> </select> <input id="link" class="w-full mb-3 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Group Link"> <button onclick="addLink()" class="w-full bg-indigo-700 text-white py-2 rounded"> Save </button> </section> <!-- Lists --> <section class="md:col-span-2 space-y-6"> <input id="search" oninput="render()" placeholder="🔍 Search..." class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"> <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"> <h2 class="font-semibold mb-2">👨 Male</h2> <div id="male" class="space-y-3"></div> </div> <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"> <h2 class="font-semibold mb-2">👩 Female</h2> <div id="female" class="space-y-3"></div> </div> <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"> <h2 class="font-semibold mb-2">🌐 General</h2> <div id="general" class="space-y-3"></div> </div> </section> </main> <footer class="text-center text-sm text-gray-500 dark:text-gray-400 py-4"> © 2026 – 𝑀𝓊𝒿 </footer> <script type="module"> import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"; import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"; const firebaseConfig = { apiKey: "AIzaSyC_D4zpRYUQTpnLOx1TnPVsMEcm4hjNt4E", authDomain: "academic-sections-navigator.firebaseapp.com", projectId: "academic-sections-navigator" }; const app = initializeApp(firebaseConfig); const db = getFirestore(app); let data = []; onSnapshot(collection(db, "groups"), snap => { data = snap.docs.map(d => ({ id: d.id, ...d.data() })); render(); }); window.render = function () { const q = search.value.toLowerCase(); ["male","female","general"].forEach(c => document.getElementById(c).innerHTML = ""); const filtered = data.filter(item => [item.group, item.section, String(item.batch)] .some(v => v.toLowerCase().includes(q)) ); filtered.sort((a, b) => { if (Number(a.batch) !== Number(b.batch)) return Number(a.batch) - Number(b.batch); const gA = a.group.toLowerCase(); const gB = b.group.toLowerCase(); if (gA < gB) return -1; if (gA > gB) return 1; return Number(a.section) - Number(b.section); }); filtered.forEach(item => { document.getElementById(item.category).innerHTML += <div class="border rounded overflow-hidden dark:border-gray-600"> <div class="h-2 ${ item.batch === '22' ? 'bg-blue-500' : item.batch === '23' ? 'bg-green-500' : item.batch === '24' ? 'bg-yellow-500' : item.batch === '25' ? 'bg-purple-500' : 'bg-gray-400' }"></div> <div class="p-3 text-gray-900 dark:text-gray-100"> <b>${item.group}</b> <div class="text-sm opacity-80"> Batch ${item.batch} | Section ${item.section} </div> <a href="${item.link}" target="_blank" class="text-indigo-700 dark:text-indigo-400 font-semibold"> Open </a> </div> </div>; }); }; window.addLink = async function () { if (!groupName.value || !batch.value || !link.value) return alert("Fill required fields"); await addDoc(collection(db,"groups"), { group: groupName.value, section: section.value || "1", batch: batch.value, category: category.value, link: link.value }); groupName.value = section.value = batch.value = link.value = ""; }; window.toggleDarkMode = function () { document.documentElement.classList.toggle("dark"); localStorage.setItem( "darkMode", document.documentElement.classList.contains("dark") ); themeToggleBtn.innerHTML = document.documentElement.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode"; }; if (localStorage.getItem("darkMode") === "true") document.documentElement.classList.add("dark"); themeToggleBtn.innerHTML = document.documentElement.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode"; </script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Academic Sections Navigator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <style>
+    .theme-animate {
+      animation: popRotate 0.4s ease;
+    }
+    @keyframes popRotate {
+      0% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.15) rotate(15deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+<header class="bg-indigo-700 dark:bg-gray-800 text-white p-4 shadow flex justify-between items-center">
+  <div>
+    <h1 class="text-xl font-bold">🧭 Academic Sections Navigator</h1>
+    <p class="text-sm opacity-80">Organized & managed by 𝑀𝓊𝒿</p>
+  </div>
+  <button id="themeToggleBtn"
+          onclick="toggleDarkMode()"
+          class="bg-white/20 px-4 py-2 rounded text-sm">
+    🌙 Dark Mode
+  </button>
+</header>
+
+<main class="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+<!-- Add form -->
+<section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+  <h2 class="font-semibold mb-4">➕ Add Group Link</h2>
+
+  <input id="groupName" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Group Name">
+  <input id="section" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Section (number only)">
+
+  <select id="batch" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white">
+    <option value="">Select Batch</option>
+    <option value="22">Batch 22</option>
+    <option value="23">Batch 23</option>
+    <option value="24">Batch 24</option>
+    <option value="25">Batch 25</option>
+  </select>
+
+  <select id="category" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white">
+    <option value="male">👨 Male</option>
+    <option value="female">👩 Female</option>
+    <option value="general">🌐 General</option>
+  </select>
+
+  <input id="link" class="w-full mb-3 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Group Link">
+
+  <button onclick="addLink()" class="w-full bg-indigo-700 text-white py-2 rounded">
+    Save
+  </button>
+</section>
+
+<!-- Lists -->
+<section class="md:col-span-2 space-y-6">
+  <input id="search" oninput="render()" placeholder="🔍 Search..."
+         class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <h2 class="font-semibold mb-2">👨 Male</h2>
+    <div id="male" class="space-y-3"></div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <h2 class="font-semibold mb-2">👩 Female</h2>
+    <div id="female" class="space-y-3"></div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <h2 class="font-semibold mb-2">🌐 General</h2>
+    <div id="general" class="space-y-3"></div>
+  </div>
+</section>
+</main>
+
+<footer class="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
+  © 2026 – 𝑀𝓊𝒿
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_D4zpRYUQTpnLOx1TnPVsMEcm4hjNt4E",
+    authDomain: "academic-sections-navigator.firebaseapp.com",
+    projectId: "academic-sections-navigator"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let data = [];
+
+  onSnapshot(collection(db, "groups"), snap => {
+    data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    render();
+  });
+
+  window.render = function () {
+    const q = search.value.toLowerCase();
+    ["male","female","general"].forEach(c => document.getElementById(c).innerHTML = "");
+
+    const filtered = data.filter(item =>
+      [item.group, item.section, String(item.batch)]
+        .some(v => v.toLowerCase().includes(q))
+    );
+
+    filtered.sort((a, b) => {
+      if (Number(a.batch) !== Number(b.batch))
+        return Number(a.batch) - Number(b.batch);
+
+      const gA = a.group.toLowerCase();
+      const gB = b.group.toLowerCase();
+      if (gA < gB) return -1;
+      if (gA > gB) return 1;
+
+      return Number(a.section) - Number(b.section);
+    });
+
+    filtered.forEach(item => {
+      document.getElementById(item.category).innerHTML += `
+        <div class="border rounded overflow-hidden dark:border-gray-600">
+          <div class="h-2 ${
+            item.batch === '22' ? 'bg-blue-500' :
+            item.batch === '23' ? 'bg-green-500' :
+            item.batch === '24' ? 'bg-yellow-500' :
+            item.batch === '25' ? 'bg-purple-500' :
+            'bg-gray-400'
+          }"></div>
+
+          <div class="p-3 text-gray-900 dark:text-gray-100">
+            <b>${item.group}</b>
+            <div class="text-sm opacity-80">
+              Batch ${item.batch} | Section ${item.section}
+            </div>
+            <a href="${item.link}" target="_blank"
+               class="text-indigo-700 dark:text-indigo-400 font-semibold">
+              Open
+            </a>
+          </div>
+        </div>`;
+    });
+  };
+
+  window.addLink = async function () {
+    if (!groupName.value || !batch.value || !link.value)
+      return alert("Fill required fields");
+
+    await addDoc(collection(db,"groups"), {
+      group: groupName.value,
+      section: section.value || "1",
+      batch: batch.value,
+      category: category.value,
+      link: link.value
+    });
+
+    groupName.value = section.value = batch.value = link.value = "";
+  };
+
+  window.toggleDarkMode = function () {
+    document.documentElement.classList.toggle("dark");
+    localStorage.setItem(
+      "darkMode",
+      document.documentElement.classList.contains("dark")
+    );
+    themeToggleBtn.innerHTML =
+      document.documentElement.classList.contains("dark")
+      ? "☀️ Light Mode"
+      : "🌙 Dark Mode";
+  };
+
+  if (localStorage.getItem("darkMode") === "true")
+    document.documentElement.classList.add("dark");
+
+  themeToggleBtn.innerHTML =
+    document.documentElement.classList.contains("dark")
+    ? "☀️ Light Mode"
+    : "🌙 Dark Mode";
+</script>
+
+</body>
+</html>
