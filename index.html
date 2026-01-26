@@ -11,20 +11,135 @@
   </script>
 
   <style>
-    .theme-animate {
-      animation: popRotate 0.4s ease;
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
     }
-    @keyframes popRotate {
-      0% { transform: scale(1) rotate(0deg); }
-      50% { transform: scale(1.15) rotate(15deg); }
-      100% { transform: scale(1) rotate(0deg); }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+    }
+
+    /* CARDS */
+    .card {
+      border-radius: 22px;
+      box-shadow: 0 20px 45px rgba(0,0,0,.12);
+      background: rgba(255,255,255,.95);
+    }
+
+    .dark .card {
+      background: rgba(31,41,55,.95);
+    }
+
+    /* FORM */
+    .form-card {
+      padding: 24px;
+    }
+
+    input, select {
+      border-radius: 14px !important;
+      padding: 12px !important;
+    }
+
+    /* BUTTON */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      padding: 14px;
+      border-radius: 16px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      transition: .25s ease;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 30px rgba(99,102,241,.45);
+    }
+
+    /* GROUP CARD */
+    .group-card {
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,.15);
+      transition: .25s ease;
+    }
+
+    .group-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .batch-bar {
+      height: 6px;
+    }
+
+    /* ========== MOBILE UX BOOST ========== */
+    @media (max-width: 768px) {
+
+      main {
+        padding: 16px !important;
+      }
+
+      header h1 {
+        font-size: 1.1rem;
+      }
+
+      header p {
+        font-size: .75rem;
+      }
+
+      /* FORM FIRST */
+      .form-card {
+        order: -1;
+      }
+
+      input, select {
+        font-size: 16px !important;
+        padding: 14px !important;
+      }
+
+      .btn-primary {
+        padding: 16px !important;
+        font-size: 1rem;
+      }
+
+      .group-card {
+        border-radius: 20px;
+      }
+
+      .group-card .p-4 {
+        padding: 16px !important;
+      }
+
+      .group-card a {
+        font-size: 1rem;
+      }
+
+      .group-card button {
+        font-size: .85rem;
+        opacity: .8;
+      }
+
+      #search {
+        font-size: 16px;
+        padding: 14px;
+      }
     }
   </style>
 </head>
 
-<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
 
-<header class="bg-indigo-700 dark:bg-gray-800 text-white p-4 shadow flex justify-between items-center">
+<header class="text-white p-4 flex justify-between items-center">
   <div>
     <h1 class="text-xl font-bold">🧭 Academic Sections Navigator</h1>
     <p class="text-sm opacity-80">Organized & managed by 𝑀𝓊𝒿</p>
@@ -36,56 +151,68 @@
   </button>
 </header>
 
-<main class="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+<main class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
 
-<!-- Add form -->
-<section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-  <h2 class="font-semibold mb-4">➕ Add Group Link</h2>
+  <!-- FORM -->
+  <section class="card form-card">
+    <h2 class="text-lg font-bold mb-1">Add New Group</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+      Add an academic WhatsApp group
+    </p>
 
-  <input id="groupName" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Group Name">
-  <input id="section" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Section (number only)">
+    <input id="groupName" class="w-full mb-3 border dark:bg-gray-700 dark:text-white"
+           placeholder="Group Name">
 
-  <select id="batch" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white">
-    <option value="">Select Batch</option>
-    <option value="22">Batch 22</option>
-    <option value="23">Batch 23</option>
-    <option value="24">Batch 24</option>
-    <option value="25">Batch 25</option>
-  </select>
+    <select id="batch" class="w-full mb-3 border dark:bg-gray-700 dark:text-white">
+      <option value="">Select Batch</option>
+      <option value="22">Batch 22</option>
+      <option value="23">Batch 23</option>
+      <option value="24">Batch 24</option>
+      <option value="25">Batch 25</option>
+    </select>
 
-  <select id="category" class="w-full mb-2 p-2 border rounded dark:bg-gray-700 dark:text-white">
-    <option value="male">👨 Male</option>
-    <option value="female">👩 Female</option>
-    <option value="general">🌐 General</option>
-  </select>
+    <input id="section" class="w-full mb-3 border dark:bg-gray-700 dark:text-white"
+           placeholder="Section (number only)">
 
-  <input id="link" class="w-full mb-3 p-2 border rounded dark:bg-gray-700 dark:text-white" placeholder="Group Link">
+    <select id="category" class="w-full mb-3 border dark:bg-gray-700 dark:text-white">
+      <option value="male">👨 Male</option>
+      <option value="female">👩 Female</option>
+      <option value="general">🌐 General</option>
+    </select>
 
-  <button onclick="addLink()" class="w-full bg-indigo-700 text-white py-2 rounded">
-    Save
-  </button>
-</section>
+    <input id="link" class="w-full mb-4 border dark:bg-gray-700 dark:text-white"
+           placeholder="Group Link">
 
-<!-- Lists -->
-<section class="md:col-span-2 space-y-6">
-  <input id="search" oninput="render()" placeholder="🔍 Search..."
-         class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+    <button onclick="addLink()" class="w-full btn-primary">
+      Save Group
+    </button>
+  </section>
 
-  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
-    <h2 class="font-semibold mb-2">👨 Male</h2>
-    <div id="male" class="space-y-3"></div>
-  </div>
+  <!-- LISTS -->
+  <section class="md:col-span-2 space-y-6">
 
-  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
-    <h2 class="font-semibold mb-2">👩 Female</h2>
-    <div id="female" class="space-y-3"></div>
-  </div>
+    <div class="card p-4">
+      <input id="search" oninput="render()"
+             class="w-full border dark:bg-gray-700 dark:text-white"
+             placeholder="🔍 Search by name, batch or section">
+    </div>
 
-  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
-    <h2 class="font-semibold mb-2">🌐 General</h2>
-    <div id="general" class="space-y-3"></div>
-  </div>
-</section>
+    <div class="card p-4">
+      <h2 class="font-semibold mb-3">👨 Male Groups</h2>
+      <div id="male" class="space-y-3"></div>
+    </div>
+
+    <div class="card p-4">
+      <h2 class="font-semibold mb-3">👩 Female Groups</h2>
+      <div id="female" class="space-y-3"></div>
+    </div>
+
+    <div class="card p-4">
+      <h2 class="font-semibold mb-3">🌐 General Groups</h2>
+      <div id="general" class="space-y-3"></div>
+    </div>
+
+  </section>
 </main>
 
 <footer class="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
@@ -94,14 +221,8 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    onSnapshot,
-    deleteDoc,
-    doc
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC_D4zpRYUQTpnLOx1TnPVsMEcm4hjNt4E",
@@ -111,7 +232,6 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-
   let data = [];
 
   onSnapshot(collection(db, "groups"), snap => {
@@ -128,44 +248,31 @@
         .some(v => v?.toLowerCase().includes(q))
     );
 
-    filtered.sort((a, b) => {
-      if (Number(a.batch) !== Number(b.batch))
-        return Number(a.batch) - Number(b.batch);
-
-      const gA = a.group.toLowerCase();
-      const gB = b.group.toLowerCase();
-      if (gA < gB) return -1;
-      if (gA > gB) return 1;
-
-      return Number(a.section) - Number(b.section);
-    });
+    filtered.sort((a, b) => Number(a.batch) - Number(b.batch));
 
     filtered.forEach(item => {
       document.getElementById(item.category).innerHTML += `
-        <div class="border rounded overflow-hidden dark:border-gray-600">
-          <div class="h-2 ${
+        <div class="group-card">
+          <div class="batch-bar ${
             item.batch === '22' ? 'bg-blue-500' :
             item.batch === '23' ? 'bg-green-500' :
             item.batch === '24' ? 'bg-yellow-500' :
-            item.batch === '25' ? 'bg-purple-500' :
-            'bg-gray-400'
+            item.batch === '25' ? 'bg-purple-500' : 'bg-gray-400'
           }"></div>
 
-          <div class="p-3">
+          <div class="p-4">
             <b>${item.group}</b>
             <div class="text-sm opacity-80">
-              Batch ${item.batch} | Section ${item.section}
+              Batch ${item.batch} · Section ${item.section}
             </div>
 
-            <div class="flex justify-between items-center mt-2">
+            <div class="flex justify-between items-center mt-3">
               <a href="${item.link}" target="_blank"
-                 class="text-indigo-700 dark:text-indigo-400 font-semibold">
+                 class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold">
                 Open
               </a>
-
-              <button
-                onclick="deleteGroup('${item.id}')"
-                class="text-red-600 text-sm hover:underline">
+              <button onclick="deleteGroup('${item.id}')"
+                      class="text-red-600 text-sm hover:underline">
                 🗑️ Delete
               </button>
             </div>
@@ -190,18 +297,14 @@
   };
 
   window.deleteGroup = async function (id) {
-    const ok = confirm("Are you sure you want to delete this item?");
-    if (!ok) return;
-
+    if (!confirm("Delete this group?")) return;
     await deleteDoc(doc(db, "groups", id));
   };
 
   window.toggleDarkMode = function () {
     document.documentElement.classList.toggle("dark");
-    localStorage.setItem(
-      "darkMode",
-      document.documentElement.classList.contains("dark")
-    );
+    localStorage.setItem("darkMode",
+      document.documentElement.classList.contains("dark"));
     themeToggleBtn.innerHTML =
       document.documentElement.classList.contains("dark")
       ? "☀️ Light Mode"
